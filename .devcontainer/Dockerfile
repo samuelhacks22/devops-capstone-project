@@ -1,6 +1,6 @@
 # The Skills Network Cloud IDE uses Ubuntu 18.04 :(
 FROM ubuntu:18.04
-
+FROM python:3.9-slim
 # Add any tools that are needed
 RUN apt-get update && \
     apt-get install -y sudo \
@@ -45,8 +45,11 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Set up the Python development environment
 WORKDIR /home/project
 RUN python3 -m pip install --upgrade pip wheel
-
-ENV PORT 8000
+# Create working folder and install dependencies
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+ENV PORT=8000
 EXPOSE $PORT
 
 # Enable color terminal for docker exec bash
@@ -54,3 +57,11 @@ ENV TERM=xterm-256color
 
 # Become a regular user
 USER $USERNAME
+# Copy the application contents
+COPY service/ ./service/
+# Switch to a non-root user
+RUN useradd --uid 1000 theia && chown -R theia /app
+USER theia
+# Run the service
+EXPOSE 8080
+CMD ["gunicorn", "--bind=0.0.0.0:8080", "--log-level=info", "service:app"]
