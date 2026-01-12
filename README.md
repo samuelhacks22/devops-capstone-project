@@ -48,3 +48,5 @@ The project follows real-world DevOps workflows from development to production.
 Licensed under the Apache License. See [LICENSE](LICENSE)
 
 ## <h3 align="center"> © IBM Corporation 2022. All rights reserved. <h3/>
+
+![Build Status](https://github.com/samuelhacks/devops-capstone-project/actions/workflows/ci-build.yaml/badge.svg)
